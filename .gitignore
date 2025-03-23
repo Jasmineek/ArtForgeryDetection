@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+
+# Model files
+*.h5
+*.keras
+*.pkl
+*.model
+
+# Uploaded files
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Generated files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log 

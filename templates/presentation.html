@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Van Gogh Artwork Authenticator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background-color: #2c3e50 !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #ecf0f1 !important;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #fff;
+            border-bottom: 2px solid #f0f0f0;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 20px;
+        }
+        .card-body {
+            padding: 25px;
+        }
+        .upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            border-color: #3498db;
+            background-color: #f8f9fa;
+        }
+        .result-section {
+            display: none;
+            margin-top: 20px;
+        }
+        .prediction {
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 15px 30px;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .authentic {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .forged {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .confidence-bar {
+            height: 25px;
+            background-color: #f0f0f0;
+            border-radius: 12px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .confidence-fill {
+            height: 100%;
+            background-color: #3498db;
+            transition: width 0.5s ease-in-out;
+        }
+        .analysis-plot {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .flash-messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .alert {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-paint-brush me-2"></i>
+                Van Gogh Authenticator
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt me-1"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-upload me-2"></i>
+                            Upload Artwork
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="uploadForm" action="{{ url_for('analyze') }}" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <div class="upload-area" id="dropZone">
+                                <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                                <h5>Drag & Drop or Click to Upload</h5>
+                                <p class="text-muted">Supported formats: JPG, PNG</p>
+                                <input type="file" class="form-control mt-3" id="image" name="image" accept="image/*" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mt-3">
+                                <i class="fas fa-search me-2"></i>
+                                Analyze Artwork
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="result-section" id="resultSection" style="display: {% if session.get('result') %}block{% else %}none{% endif %}">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                Analysis Results
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if session.get('result') %}
+                            <div class="text-center">
+                                <h3 class="mb-4">Prediction</h3>
+                                <p class="prediction {% if session.result.is_authentic %}authentic{% else %}forged{% endif %}">
+                                    {{ 'Wow! It\'s Authentic' if session.result.is_authentic else 'Ooops! It\'s Forged' }}
+                                </p>
+                                
+                                <div class="mt-4">
+                                    <h5>Confidence Score</h5>
+                                    <div class="confidence-bar">
+                                        <div class="confidence-fill" style="width: {{ session.result.confidence }}%"></div>
+                                    </div>
+                                    <p class="mt-2">{{ "%.1f"|format(session.result.confidence) }}%</p>
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <h5>Confidence Visualization</h5>
+                                    <img src="{{ url_for('static', filename=session.result.plot_path) }}" alt="Analysis Plot" class="analysis-plot">
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <h5>Raw Prediction Score</h5>
+                                    <p class="text-muted">{{ "%.4f"|format(session.result.prediction) }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Handle file selection
+        const fileInput = document.getElementById('image');
+        const dropZone = document.getElementById('dropZone');
+        
+        // Show selected filename
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                const fileName = this.files[0].name;
+                const fileInfo = document.createElement('p');
+                fileInfo.className = 'text-success mt-2';
+                fileInfo.innerHTML = `<i class="fas fa-check-circle me-2"></i>Selected: ${fileName}`;
+                
+                // Remove any existing file info
+                const existingInfo = dropZone.querySelector('.text-success');
+                if (existingInfo) {
+                    existingInfo.remove();
+                }
+                
+                dropZone.appendChild(fileInfo);
+            }
+        });
+
+        // Handle drag and drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('border-primary');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('border-primary');
+        }
+
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            
+            // Trigger change event to show filename
+            const event = new Event('change');
+            fileInput.dispatchEvent(event);
+        }
+
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', (e) => {
+            const imageFile = fileInput.files[0];
+            if (!imageFile) {
+                e.preventDefault();
+                alert('Please select an image first');
+            }
+        });
+
+        // Auto-dismiss flash messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                    setTimeout(() => alert.remove(), 150);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html> 
