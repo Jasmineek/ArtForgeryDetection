@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from werkzeug.utils import secure_filename
 from functools import wraps
 import seaborn as sns
-
+#hellooo
 app = Flask(__name__)
 app.secret_key = 'van-gogh-auth-secret-key-2024'
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
