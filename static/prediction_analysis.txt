@@ -1,0 +1,34 @@
+Prediction Analysis Report
+========================
+
+Authentic Images:
+-----------------
+vangogh_authentic_16_portrait_of_dr_gachet.jpg: 0.9055 (Forged)
+vangogh_authentic_10_almond_blossoms.jpg: 0.5740 (Forged)
+vangogh_authentic_5_bedroom_in_arles.jpg: 0.5236 (Forged)
+vangogh_authentic_7_irises.jpg: 0.4740 (Authentic)
+
+Forged Images:
+-------------
+seed0051.png: 0.8465 (Forged)
+download-25.jpg: 0.7590 (Forged)
+download.jpg: 0.9518 (Forged)
+download-20.jpg: 0.7428 (Forged)
+seed0152.png: 0.8544 (Forged)
+seed0025.png: 0.8874 (Forged)
+seed0008.png: 0.9041 (Forged)
+seed0021.png: 0.9110 (Forged)
+seed0007.png: 0.8026 (Forged)
+seed0004.png: 0.7872 (Forged)
+seed0011.png: 0.8960 (Forged)
+seed0005.png: 0.8072 (Forged)
+seed0029.png: 0.8011 (Forged)
+seed0015.png: 0.8618 (Forged)
+seed0000.png: 0.8153 (Forged)
+download-13.jpg: 0.9049 (Forged)
+download-29.jpg: 0.6711 (Forged)
+seed0117.png: 0.8549 (Forged)
+seed0128.png: 0.9289 (Forged)
+
+Optimal threshold: 0.6711
+Accuracy with optimal threshold: 0.9130

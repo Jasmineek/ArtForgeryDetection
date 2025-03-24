@@ -1,0 +1,27 @@
+Detailed Metrics Report
+=====================
+
+Confusion Matrix:
+-----------------
+True Negatives (Authentic correctly classified): 1
+False Positives (Authentic incorrectly classified as Forged): 3
+False Negatives (Forged incorrectly classified as Authentic): 0
+True Positives (Forged correctly classified): 19
+
+Performance Metrics:
+-------------------
+Accuracy: 0.8696
+Precision: 0.8636
+Recall: 1.0000
+F1 Score: 0.9268
+
+Classification Report:
+--------------------
+              precision    recall  f1-score   support
+
+   Authentic     1.0000    0.2500    0.4000         4
+      Forged     0.8636    1.0000    0.9268        19
+
+    accuracy                         0.8696        23
+   macro avg     0.9318    0.6250    0.6634        23
+weighted avg     0.8874    0.8696    0.8352        23

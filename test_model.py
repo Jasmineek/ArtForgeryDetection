@@ -1,9 +1,8 @@
-import tensorflow as tf
+Create an improved training script with these enhancementsimport tensorflow as tf
 import numpy as np
 from PIL import Image
 import os
 
-def load_and_preprocess_image(image_path):
     try:
         img = Image.open(image_path)
         img = img.convert('RGB')

@@ -1,0 +1,44 @@
+
+    <html>
+    <head>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .metric-box { background-color: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; }
+            .metric-value { font-size: 1.2em; font-weight: bold; color: #3498db; }
+            img { max-width: 100%; height: auto; margin: 20px 0; }
+            pre { background-color: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        </style>
+    </head>
+    <body>
+        <h2>Model Evaluation Report</h2>
+        
+        <div class="metric-box">
+            <h3>Overall Accuracy</h3>
+            <div class="metric-value">0.5000</div>
+        </div>
+        
+        <div class="metric-box">
+            <h3>Confusion Matrix</h3>
+            <img src="confusion_matrix.png" alt="Confusion Matrix">
+        </div>
+        
+        <div class="metric-box">
+            <h3>ROC Curve</h3>
+            <img src="roc_curve.png" alt="ROC Curve">
+        </div>
+        
+        <div class="metric-box">
+            <h3>Detailed Classification Report</h3>
+            <pre>              precision    recall  f1-score   support
+
+   Authentic       0.50      1.00      0.67         6
+      Forged       0.00      0.00      0.00         6
+
+    accuracy                           0.50        12
+   macro avg       0.25      0.50      0.33        12
+weighted avg       0.25      0.50      0.33        12
+</pre>
+        </div>
+    </body>
+    </html>
+    
